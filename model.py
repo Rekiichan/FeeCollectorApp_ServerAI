@@ -250,9 +250,9 @@ def load_model(path):
 
 
 
-def preprocess_image(image_path, resize=False):
-    img = cv2.imread(image_path)
-    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+def preprocess_image(img, resize=False):
+    # img = cv2.imread(image_path)
+    # image_path = cv2.cvtColor(image_path, cv2.COLOR_BGR2RGB)
     img = img / 255
     if resize:
         img = cv2.resize(img, (224, 224))
@@ -450,9 +450,9 @@ def out_put(crop_characters):
     #plt.savefig('final_result.png', dpi=300)
 
 
-def sum_predict(test_image_path):
+def predict(img):
     # test_image_path = "image_recognize.jpg"
-    vehicle, LpImg, cor = get_plate(test_image_path)
+    vehicle, LpImg, cor = get_plate(img)
     plate_image, binary, thre_mor = Proccess_after_getplate(LpImg)
     cont, _ = cv2.findContours(
         binary, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
@@ -477,7 +477,11 @@ def sum_predict(test_image_path):
     #   cv2.drawContours(plate_image, cont, -1, (0, 255, 0), 3)
     #   cv2_imshow(plate_image)
     #   cv2_imshow(binary)
-    crop_characters = sortCharacters(heightRatio, crop_characters)
+    
+    
+    # crop_characters = sortCharacters(heightRatio, crop_characters)
+    
+    
     # print(len(crop_characters))
     
     # fig = plt.figure(figsize=(10,6))

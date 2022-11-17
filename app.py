@@ -1,8 +1,8 @@
 from flask import Flask, flash, request, redirect, url_for
 from flask_cors import CORS, cross_origin
-from model import sum_predict
+from model import predict
 import cv2 as cv
-
+import numpy as np
 # Khởi tạo Flask Server Backend
 app = Flask(__name__)
 
@@ -14,12 +14,13 @@ app.config['UPLOAD_FOLDER'] = ''
 
 @app.route('/', methods=['POST', 'GET'])
 @cross_origin(origin='*')
-def predict():
+def home():
     if request.method == 'POST':
-        image = request.files['file']
-        path = 'image_recognize.jpg'
-        image.save(path)
-        res = sum_predict(path)
+        image = request.files['file'].read()
+        file_bytes = np.fromstring(image, np.uint8)
+        img = cv.imdecode(file_bytes, cv.IMREAD_UNCHANGED)  
+        img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
+        res = predict(img)
         return res
     return ''
 
