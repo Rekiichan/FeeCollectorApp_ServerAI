@@ -22,6 +22,8 @@ def home():
         img = cv.cvtColor(img, cv.COLOR_BGR2RGB)
         res = predict(img)
         return res
+    if request.method == 'GET':
+        return 'get'
     return ''
 
 
