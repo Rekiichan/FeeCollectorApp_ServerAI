@@ -15,6 +15,9 @@ import matplotlib.pyplot as plt
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'
 
+
+
+
 # required library
 # from local_utils import detect_lp
 
