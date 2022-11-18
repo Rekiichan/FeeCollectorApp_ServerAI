@@ -254,7 +254,7 @@ def predict(img):
     #   cv2_imshow(plate_image)
     #   cv2_imshow(binary)
 
-    # crop_characters = sortCharacters(heightRatio, crop_characters)
+    crop_characters = sortCharacters(heightRatio, crop_characters)
 
     # print(len(crop_characters))
 
