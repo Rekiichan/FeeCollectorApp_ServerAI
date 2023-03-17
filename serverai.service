@@ -1,0 +1,13 @@
+# /etc/systemd/system/flaskapp.service
+
+[Unit]
+Description=Flask Application
+After=network.target
+
+[Service]
+WorkingDirectory=/home/ubuntu/serverai
+ExecStart=/usr/bin/gunicorn /home/ubuntu/serverai/app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
