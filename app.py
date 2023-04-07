@@ -1,10 +1,13 @@
 from flask import Flask, request
-from flask_cors import CORS, cross_originad
+from flask_cors import CORS, cross_origin
 from model import predict
 from datetime import datetime
+from cloudinary.uploader import upload
+from cloudinary.utils import cloudinary_url
 import numpy as np
 import cv2 as cv
 import os
+import cloudinary as cd
 
 # Khởi tạo Flask Server Backend
 app = Flask(__name__)
@@ -14,28 +17,13 @@ CORS(app)
 app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['UPLOAD_FOLDER'] = ''
 
-def checkResponseIsValid(lp):
-    # num1 is represent for 2 first number following city number    
-    num1 = lp[0:2]
-
-    # str1 is represent for 3rd character of the license plate, it is always non-number
-    str1 = lp[2]
-
-    # num2 is represent for the rest of the numbers from 4th character and it's always numbers
-    num2 = lp[3:]
-
-    # num for test the type of number
-    num = 1
-    if 'A' > str1 or 'Z' < str1:
-        return False
-    
-    try:
-        num = int(num1) + int(num2)
-    except:
-        return False
-    if type(num) == int:
-        return True
-    return False
+# Config Cloudinary
+cd.config(
+    cloud_name="ds3knqnuh",
+    api_key="382549695322695",
+    api_secret="X20yMm21kH3OUU2va2SOR75lSIE",
+    secure=True
+)
 
 @app.route('/predict', methods=['POST', 'GET'])
 @cross_origin(origin='*')
@@ -46,7 +34,7 @@ def home():
 
         # convert to np.uint8
         file_bytes = np.fromstring(image, np.uint8)
-        
+
         # convert this matrix to rgb image
         img = cv.imdecode(file_bytes, cv.IMREAD_UNCHANGED)
         imgRGB = cv.cvtColor(img, cv.COLOR_BGR2RGB)
@@ -54,27 +42,21 @@ def home():
         # detect image
         res = predict(imgRGB)
 
-        #path for save image
-        path = "/home/ubuntu/resources/images/"
-        
-        # Check whether the specified path exists or not
-        isExist = os.path.exists(path)
-        if not isExist:
-        # Create a new directory because it does not exist
-            os.makedirs(path)
-
         now = datetime.now()
         dt_string = now.strftime("%d-%m-%Y-%H-%M-")
+        
+        img_name = dt_string+res
 
-        img_name = dt_string+res+".png"
-        cv.imwrite(path + img_name, img)
-        mydict = {'license_plate': res, 'image_link': path + img_name}
+        upload(image, public_id=img_name)
+        url, options = cloudinary_url(img_name)
+        mydict = {'license_plate': res, 'image_link': url}
         return mydict
 
     if request.method == 'GET':
         return 'test'
 
     return 'no method detect'
+
 
 # Start Backend
 if __name__ == '__main__':
