@@ -1,5 +1,5 @@
-from flask import Flask, flash, request, redirect, url_for
-from flask_cors import CORS, cross_origin
+from flask import Flask, request
+from flask_cors import CORS, cross_originad
 from model import predict
 from datetime import datetime
 import numpy as np
@@ -15,9 +15,6 @@ app.config['CORS_HEADERS'] = 'Content-Type'
 app.config['UPLOAD_FOLDER'] = ''
 
 def checkResponseIsValid(lp):
-    # check the license plate detected always have 8 or 9 character
-    if (len(lp) < 8 or len(lp) > 9):
-        return False
     # num1 is represent for 2 first number following city number    
     num1 = lp[0:2]
 
@@ -58,7 +55,7 @@ def home():
         res = predict(imgRGB)
 
         #path for save image
-        path = "images"
+        path = "/home/ubuntu/resources/images/"
         
         # Check whether the specified path exists or not
         isExist = os.path.exists(path)
@@ -69,17 +66,16 @@ def home():
         now = datetime.now()
         dt_string = now.strftime("%d-%m-%Y-%H-%M-")
 
-        if checkResponseIsValid(res):
-            img_name = dt_string+res+".png"
-            cv.imwrite("images\\" + img_name, img)
-            mydict = {'license_plate': res, 'image_link': img_name}
-            return mydict
-        else:
-            return 'Detect license plate false! Please try again'
+        img_name = dt_string+res+".png"
+        cv.imwrite(path + img_name, img)
+        mydict = {'license_plate': res, 'image_link': path + img_name}
+        return mydict
+
     if request.method == 'GET':
         return 'test'
+
     return 'no method detect'
 
 # Start Backend
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=5050)
